@@ -33,7 +33,7 @@ jobs:
           name: my-data
       - name: Print artifact and env name
         run: |
-          cat my-data.txt
+          cat info.txt
           echo "Env name is ${{ needs.prepare.outputs.env_name }}"
 
   summary:
