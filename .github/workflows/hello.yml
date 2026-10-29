@@ -1,0 +1,29 @@
+name: My First Workflow          # имя, которое видно во вкладке Actions
+
+on:                              # ТРИГГЕРЫ — когда запускать
+  push:
+    branches: [main]             # при push в main
+  pull_request:                  # при открытии/обновлении PR
+  workflow_dispatch:             # кнопка ручного запуска
+  # schedule:
+  #   - cron: '0 2 * * *'        # по расписанию (каждый день в 02:00 UTC)
+
+env:                             # переменные окружения на весь workflow
+  GREETING: Hello
+
+jobs:                            # список jobs
+  hello:                         # id job'а (придумываешь сам)
+    name: Say hello              # отображаемое имя (необязательно)
+    runs-on: ubuntu-latest       # на какой машине выполнять
+    steps:                       # шаги, выполняются ПО ПОРЯДКУ
+      - name: Checkout code
+        uses: actions/checkout@v4      # готовый action: клонирует репозиторий
+
+      - name: Print greeting
+        run: echo "$GREETING from GitHub Actions!"   # обычная shell-команда
+
+      - name: Several commands
+        run: |
+          echo "Current dir: $(pwd)"
+          ls -la
+          echo "Runner OS: ${{ runner.os }}"
