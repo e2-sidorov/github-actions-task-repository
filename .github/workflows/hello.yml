@@ -12,7 +12,7 @@ env:                             # переменные окружения на 
   GREETING: Hello
 
 jobs:                            # список jobs
-  jobfirstid:                    # id job'а 
+  greet:                         # id job'а 
     name: Say hello              # отображаемое имя (необязательно)
     runs-on: ubuntu-latest       # на какой машине выполнять
     steps:                       # шаги, выполняются ПО ПОРЯДКУ
@@ -28,12 +28,11 @@ jobs:                            # список jobs
           ls -la
           echo "Runner OS: ${{ runner.os }}"
   
-  jobsecondid:
-    name: Job name
+  info:
+    name: Print system info
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4      # готовый action: клонирует репозиторий
-    
       - name: Data and Java version
-        run: date; java -version
+        run: |
+          date
+          java -version
