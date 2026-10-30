@@ -1,42 +1,46 @@
 name: My Second Workflow
 
-on: 
+on:
   workflow_dispatch:
 
 jobs:
- prepare:
-      runs-on: ubuntu-latest
-      outputs:
-        target: ${{ steps.get-name.outputs.env_name }}
-      steps:
-        - name: Write file
-          run: |
-            echo "First line text" > info.txt
-            echo "Second line text" >> info.txt
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      target: ${{ steps.get-name.outputs.env_name }}
+    steps:
+      - name: Write file
+        run: |
+          echo "First line text" > info.txt
+          echo "Second line text" >> info.txt
 
-        - name: Upload file
-          uses: actions/upload-artifact@v4 
-          with:
-            name: my-data
-            path: info.txt
+      - name: Upload file
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-data
+          path: info.txt
 
-        - name: Set env name
-          id: get-name
-          run: echo "env_name=staging" >> "$GITHUB_OUTPUT" 
+      - name: Set env name
+        id: get-name
+        run: echo "env_name=staging" >> "$GITHUB_OUTPUT"
 
- read:
+  read:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: my-data
+
       - name: Print artifact and env name
         run: |
           cat info.txt
           echo "Env name is ${{ needs.prepare.outputs.target }}"
 
- summary:
+  summary:
     needs: [prepare, read]
     runs-on: ubuntu-latest
     steps:
       - name: Print result
         run: echo "Pipeline finished"
-          
