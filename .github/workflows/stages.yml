@@ -7,7 +7,7 @@ jobs:
   prepare:
       runs-on: ubuntu-latest
       outputs:
-        env_name: ${{ steps.get-name.outputs.env_name }}
+        target: ${{ steps.get-name.outputs.env_name }}
       steps:
         - name: Write file
           run: |
@@ -34,7 +34,7 @@ jobs:
       - name: Print artifact and env name
         run: |
           cat info.txt
-          echo "Env name is ${{ needs.prepare.outputs.env_name }}"
+          echo "Env name is ${{ needs.prepare.outputs.target }}"
 
   summary:
     needs: [prepare, read]
