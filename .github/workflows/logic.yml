@@ -12,43 +12,35 @@ on:
         default: false
 
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    outputs:
-      target: ${{ steps.get-name.outputs.env_name }}
-    steps:
-      - name: Write file
-        run: |
-          echo "First line text" > info.txt
-          echo "Second line text" >> info.txt
-
-      - name: Upload file
-        uses: actions/upload-artifact@v4
-        with:
-          name: my-data
-          path: info.txt
-
-      - name: Set env name
-        id: get-name
-        run: echo "env_name=staging" >> "$GITHUB_OUTPUT"
-
-  read:
-    needs: prepare
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [17, 21]
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: my-data
+        - name: Setup Java
+          uses: actions/setup-java@v4
+          
+        - name: Print Java Version 
+          run: java -version
+          
+        - name: Print Deploying to PROD!
+          if: inputs.environmet == 'prod'
+          run: echo "Deploying to PROD!"
 
-      - name: Print artifact and env name
-        run: |
-          cat info.txt
-          echo "Env name is ${{ needs.prepare.outputs.target }}"
+        - name: Fail Job
+          if: inputs.should_fail == 'true'
+          run: exit 1
+
+        - name: Print Tests failed collecting logs
+          if: failure()
+          run: echo "Tests failed, collecting logs"
 
   summary:
-    needs: [prepare, read]
+    needs: tests
+    if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Print result
-        run: echo "Pipeline finished"
+      - name: Print test result
+        run: echo ${{ needs.tests.result }}
