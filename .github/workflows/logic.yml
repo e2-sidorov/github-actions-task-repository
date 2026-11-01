@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - name: Setup Java
-          uses: actions/setup-java@v4
+          uses: actions/setup-java@v5
           
         - name: Print Java Version 
           run: java -version
