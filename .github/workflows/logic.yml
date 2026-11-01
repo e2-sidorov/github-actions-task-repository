@@ -3,14 +3,15 @@ name: My Third Workflow
 on:
   workflow_dispatch:
     inputs:
-      environmet:
+      environment:
         description: Target environment
         type: choice
         options: [dev, staging, prod]
+        default: dev
       should_fail:
         type: boolean
         default: false
-
+        
 jobs:
   tests:
     strategy:
@@ -19,31 +20,31 @@ jobs:
         java: [17, 21]
     runs-on: ubuntu-latest
     steps:
-        - name: Setup Java
-          uses: actions/setup-java@v5
-          with:
-            distribution: temurin
-            java-version: ${{ matrix.java }}
-          
-        - name: Print Java Version 
-          run: java -version
-          
-        - name: Print Deploying to PROD!
-          if: inputs.environmet == 'prod'
-          run: echo "Deploying to PROD!"
-
-        - name: Fail Job
-          if: inputs.should_fail == true
-          run: exit 1
-
-        - name: Print Tests failed collecting logs
-          if: failure()
-          run: echo "Tests failed, collecting logs"
-
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+         distribution: temurin
+         java-version: ${{ matrix.java }}
+         
+      - name: Print Java Version
+        run: java -version
+        
+      - name: Print Deploying to PROD!
+        if: inputs.environment == 'prod'
+        run: echo "Deploying to PROD!"
+        
+      - name: Fail Job
+        if: inputs.should_fail == true
+        run: exit 1
+        
+      - name: Print Tests failed collecting logs
+        if: failure()
+        run: echo "Tests failed, collecting logs"
+        
   summary:
     needs: tests
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Print test result
-        run: echo ${{ needs.tests.result }}
+        run: echo "Test result = ${{ needs.tests.result }}"
