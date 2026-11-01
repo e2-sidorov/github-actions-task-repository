@@ -33,7 +33,7 @@ jobs:
           run: echo "Deploying to PROD!"
 
         - name: Fail Job
-          if: inputs.should_fail == 'true'
+          if: inputs.should_fail == true
           run: exit 1
 
         - name: Print Tests failed collecting logs
