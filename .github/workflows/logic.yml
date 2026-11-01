@@ -26,7 +26,7 @@ jobs:
             java-version: ${{ matrix.java }}
           
         - name: Print Java Version 
-          run: java -version
+          run: echo java -version
           
         - name: Print Deploying to PROD!
           if: inputs.environmet == 'prod'
