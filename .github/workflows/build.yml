@@ -1,0 +1,54 @@
+name: My Third Workflow
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+  workflow_dispatch: 
+    inputs:
+      env:
+        description: Target environment
+        type: choice
+        options: [dev, staging]
+        default: dev
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+  
+jobs:
+  build:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven 
+
+      - name: Optional check
+        id: optional_check
+        continue-on-error: true
+        run: exit 1
+
+      - name: Print outcome and conclusion
+        id: outcome_and_conclusion
+        run: |
+          echo "${{ steps.optional_check.outcome }}"
+          echo "${{ steps.optional_check.conclusion }}"
+
+      - name: Run tests
+        run: mvn -B test -Denv=${{ inputs.env || 'dev' }} 
+          
+      - name: Upload artefact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports 
