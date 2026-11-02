@@ -48,7 +48,9 @@ jobs:
           echo "conclusion: ${{ steps.optional_check.conclusion }}"
 
       - name: Run tests
-        run: mvn -B test -Denv=${{ inputs.env || 'dev' }} 
+        env:
+          TEST_ENV: ${{ inputs.env || 'dev' }} 
+        run: mvn -B test -Denv=$TEST_ENV
           
       - name: Upload artefact
         if: always()
