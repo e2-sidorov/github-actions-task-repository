@@ -43,10 +43,9 @@ jobs:
         run: exit 1
 
       - name: Print outcome and conclusion
-        id: outcome_and_conclusion
         run: |
-          echo "${{ steps.optional_check.outcome }}"
-          echo "${{ steps.optional_check.conclusion }}"
+          echo "outcome: ${{ steps.optional_check.outcome }}"
+          echo "conclusion: ${{ steps.optional_check.conclusion }}"
 
       - name: Run tests
         run: mvn -B test -Denv=${{ inputs.env || 'dev' }} 
